@@ -21,6 +21,7 @@ public class Member {
     @Column(name = "MEMBER_ID")
     private Long id;
 
+    //TODO 멤버 address 필드 선언 & 멤버 생성자 어떻게 구현할까?
     //TODO xToOne으로 된 애들 다 LAZY로
     @OneToOne(mappedBy = "member",fetch = LAZY)
     private Cart cart;
