@@ -12,4 +12,11 @@ public class Item {
     @Id @GeneratedValue
     @Column(name = "ITEM_ID")
     private Long id;
+
+    private String name;
+    private Long price;
+    private Long quantity;
+    private String item_detail;
+    // private 이미지 상품이미지;
+
 }

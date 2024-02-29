@@ -7,9 +7,9 @@ import static jakarta.persistence.FetchType.*;
 
 @Entity
 @Data
-public class OrderItem {
+public class CartItem {
     @Id @GeneratedValue
-    @Column(name = "ORDERITEM_ID")
+    @Column(name = "CARTITEM_ID")
     private Long id;
 
     @ManyToOne(fetch = LAZY)
@@ -19,6 +19,4 @@ public class OrderItem {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "ITEM_ID")
     private Item item;
-
-    private Long count;
 }

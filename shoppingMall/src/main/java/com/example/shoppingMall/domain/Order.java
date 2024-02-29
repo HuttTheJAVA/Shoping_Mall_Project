@@ -3,8 +3,11 @@ package com.example.shoppingMall.domain;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
+import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
+
+import static jakarta.persistence.FetchType.*;
 
 @Entity
 @Getter
@@ -14,7 +17,7 @@ public class Order {
     @Column(name = "ORDER_ID")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "MEMBER_ID")
     private Member member;
 
@@ -30,12 +33,55 @@ public class Order {
     //TODO 이거 어디서 계산처리할지?
     private Long totalPrice;
 
-    public Order(Member member,Boolean isPay,LocalDateTime orderDate,String city,String street,String zipCode,String phone){
-        this.member = member;
-        this.orderDate = orderDate;
-        this.address = new Address(city,street,zipCode);
-        this.isPay = isPay; // 기본값 설정
-        this.phone = phone; // 기본값 설정
-        this.totalPrice = 0L; // 기본값 설정
+    private Order(Builder builder){
+        this.member = builder.member;
+        this.isPay = builder.isPay;
+        this.orderDate = builder.orderDate;
+        this.address = builder.address;
+        this.phone = builder.phone;
+        this.totalPrice = builder.totalPrice;
+    }
+
+    public static class Builder{
+        private Member member;
+        private Boolean isPay;
+        private LocalDateTime orderDate;
+        private Address address;
+        private String phone;
+        private Long totalPrice;
+
+        public Builder member(Member member){
+            this.member = member;
+            return this;
+        }
+
+        public Builder isPay(Boolean isPay){
+            this.isPay = isPay;
+            return this;
+        }
+
+        public Builder orderDate(LocalDateTime orderDate){
+            this.orderDate = orderDate;
+            return this;
+        }
+
+        public Builder address(Address address){
+            this.address = address;
+            return this;
+        }
+
+        public Builder phone(String phone){
+            this.phone = phone;
+            return this;
+        }
+
+        public Builder totalPrice(Long totalPrice){
+            this.totalPrice = totalPrice;
+            return this;
+        }
+
+        public Order build(){
+            return new Order(this);
+        }
     }
 }
