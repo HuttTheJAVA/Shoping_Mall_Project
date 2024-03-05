@@ -1,7 +1,6 @@
 package com.example.shoppingMall.repository;
 
 import com.example.shoppingMall.domain.Member;
-import com.example.shoppingMall.exception.ExistFieldException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;

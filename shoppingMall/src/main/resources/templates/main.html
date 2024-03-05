@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Online Store</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+</head>
+<body>
+<div th:replace="header.html"></div>
+
+<section>
+<!--    이 부분 th:each로 바꿔야함-->
+    <div class="product">
+        <img th:src="@{/images/Item/iphone.png}" alt="Product 1">
+        <h3>Product 1</h3>
+        <p>애플 아이폰14</p>
+        <p>1,540,000 원</p>
+        <button>Add to Cart</button>
+    </div>
+    <!-- 나머지 제품들도 비슷하게 추가 -->
+</section>
+<footer>
+    <p>&copy; 2024 Amazon. All rights reserved.</p>
+</footer>
+</body>
+</html>

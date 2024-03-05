@@ -13,12 +13,11 @@ public class OrderItem {
     private Long id;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "CART_ID")
-    private Cart cart;
+    @JoinColumn(name = "ORDER_ID")
+    private Order order;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "ITEM_ID")
     private Item item;
-
     private Long count;
 }

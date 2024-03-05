@@ -1,0 +1,76 @@
+/* 스타일링 */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 10px 0;
+    text-align: center;
+}
+nav {
+    background-color: #f4f4f4;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between; /* 메뉴를 양쪽으로 정렬 */
+    align-items: center; /* 수직 가운데 정렬 */
+}
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+nav ul li {
+    display: inline;
+    margin-right: 20px;
+}
+nav ul li:last-child {
+    margin-right: 0; /* 마지막 메뉴 항목의 오른쪽 마진 제거 */
+}
+nav ul li a {
+    color: #333;
+    text-decoration: none;
+}
+section {
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2칸의 가로 그리드 */
+    grid-gap: 20px; /* 그리드 간격 */
+}
+.product {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center;
+    padding: 20px;
+}
+.product img {
+    width: 400px;
+    height: 400px;
+    object-fit: contain;
+    border-radius: 5px;
+}
+.product h3 {
+    margin-top: 10px;
+}
+.product p {
+    margin-bottom: 10px;
+}
+.product button {
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+footer {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 10px 0;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}

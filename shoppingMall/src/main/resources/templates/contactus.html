@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us</title>
+  <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+  <style>
+        /* 스타일링은 여기에 추가하세요 */
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            width: 50%;
+            margin: 0 auto;
+            padding-top: 50px;
+        }
+        h2 {
+            text-align: center;
+        }
+        .contact-info {
+            margin-bottom: 20px;
+        }
+        .contact-info p {
+            margin: 10px 0;
+        }
+        #map {
+            width: 100%;
+            height: 300px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+        }
+        #map img {
+            width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="header.html"></div>
+
+<div class="container">
+  <h2>연락처</h2>
+  <div class="contact-info">
+    <p>주소: 서울시 강남구 삼성동 123-45번지</p>
+    <p>전화번호: 82+ 02-1234-5678</p>
+    <p>이메일: Amazon365@example.com</p>
+  </div>
+  <div id="map">
+    <!-- 지도 이미지를 여기에 추가하세요 -->
+    <img th:src="@{/images/location.png}" alt="지도 이미지">
+  </div>
+</div>
+</body>
+</html>

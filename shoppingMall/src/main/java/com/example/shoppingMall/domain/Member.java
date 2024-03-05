@@ -37,10 +37,18 @@ public class Member {
     private String phone;
     private Level level;
     private LocalDateTime register_date;
-    @OneToOne(mappedBy = "member",fetch = LAZY)
+    @OneToOne(mappedBy = "member",fetch = LAZY,cascade = PERSIST)
     private Cart cart;
     @OneToMany(mappedBy = "member",cascade = ALL)
     private List<Order> orders = new ArrayList<>();
+
+    // 연관관계 편의 메서드 (Cart)
+
+
+    public void setCart(Cart cart) {
+        this.cart = cart;
+        cart.setMember(this);
+    }
 
     private Member(Builder builder){
         this.user_id = builder.user_id;
@@ -51,7 +59,6 @@ public class Member {
         this.phone = builder.phone;
         this.level = builder.level;
         this.register_date = builder.register_date;
-        this.cart = builder.cart;
     }
 
     public static class Builder{
@@ -64,8 +71,6 @@ public class Member {
         private String phone;
         private Level level;
         private LocalDateTime register_date;
-        private Cart cart;
-
         public Builder(String id){
             this.user_id = id;
         }
@@ -105,10 +110,6 @@ public class Member {
             return this;
         }
 
-        public Builder cart(Cart cart){
-            this.cart = cart;
-            return this;
-        }
 
         public Member build(){
             return new Member(this);

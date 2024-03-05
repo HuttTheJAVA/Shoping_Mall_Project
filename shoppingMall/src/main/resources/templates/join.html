@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입</title>
+    <style>
+        /* 스타일링 */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .signup-container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 400px; /* 회원가입 폼 컨테이너의 가로 크기 */
+        }
+        input[type="text"],
+        input[type="password"] {
+            width: calc(100% - 20px); /* 입력 필드의 가로 크기 */
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            box-sizing: border-box; /* 내용(padding)과 테두리(border)가 요소의 전체 너비와 높이에 포함되도록 함 */
+        }
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 3px;
+            background-color: #007bff;
+            color: #ffffff;
+            cursor: pointer;
+        }
+        .logo {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="signup-container">
+
+    <h2>회원가입</h2>
+    <form action="#" method="post">
+        <input type="text" name="id" placeholder="ID" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <input type="text" name="name" placeholder="이름" required>
+        <input type="text" name="nickname" placeholder="닉네임" required>
+        <input type="text" name="phone" placeholder="전화번호" required>
+        <input type="text" name="city" placeholder="도시" required>
+        <input type="text" name="street" placeholder="거리" required>
+        <input type="text" name="zipcode" placeholder="우편번호" required>
+        <input type="submit" value="회원가입">
+    </form>
+</div>
+</body>
+</html>

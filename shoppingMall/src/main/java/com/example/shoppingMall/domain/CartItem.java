@@ -19,4 +19,6 @@ public class CartItem {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "ITEM_ID")
     private Item item;
+
+    private Long quantity;
 }

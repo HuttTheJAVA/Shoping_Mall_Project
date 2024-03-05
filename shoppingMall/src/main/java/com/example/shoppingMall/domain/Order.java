@@ -6,7 +6,10 @@ import lombok.Getter;
 import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
+import static jakarta.persistence.CascadeType.*;
 import static jakarta.persistence.FetchType.*;
 
 @Entity
@@ -21,6 +24,8 @@ public class Order {
     @JoinColumn(name = "MEMBER_ID")
     private Member member;
 
+    @OneToMany(mappedBy = "order",fetch = LAZY,cascade = ALL)
+    private List<OrderItem> orderItems = new ArrayList<>();
     private Boolean isPay;
 
     private LocalDateTime orderDate;
