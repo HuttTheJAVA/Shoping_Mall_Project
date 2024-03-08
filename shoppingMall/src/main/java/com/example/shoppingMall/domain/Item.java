@@ -4,10 +4,13 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Item {
     @Id @GeneratedValue
     @Column(name = "ITEM_ID")
@@ -15,7 +18,7 @@ public class Item {
     private String name;
     private Long price;
     private Long quantity;
-    private String item_detail;
+    private String itemDetail;
     // private 이미지 상품이미지;
 
 

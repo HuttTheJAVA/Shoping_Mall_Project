@@ -36,7 +36,7 @@ public class CartItemRepositoryTest {
                 .nickName("okMe")
                 .address(new Address("city of seoul","moo","1412"))
                 .phone("010-7359-4777")
-                .level(Level.USER)
+                .level(Level.ROLE_USER)
                 .date(LocalDateTime.now())
                 .build();
 

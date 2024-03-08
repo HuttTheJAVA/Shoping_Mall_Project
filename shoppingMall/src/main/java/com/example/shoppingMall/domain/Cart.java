@@ -1,7 +1,9 @@
 package com.example.shoppingMall.domain;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +14,7 @@ import static jakarta.persistence.FetchType.*;
 @Entity
 @Data
 @Table(name = "cart")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Cart {
     @Id
     @GeneratedValue

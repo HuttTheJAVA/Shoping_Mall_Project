@@ -1,8 +1,10 @@
 package com.example.shoppingMall.domain;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
@@ -15,6 +17,7 @@ import static jakarta.persistence.FetchType.*;
 @Entity
 @Getter
 @Table(name = "ORDERS") // Order는 H2 예약어라서 s를 붙혀주자
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Order {
     @Id @GeneratedValue
     @Column(name = "ORDER_ID")

@@ -45,22 +45,69 @@
         .logo {
             margin-bottom: 20px;
         }
+        .container {
+            max-width: 560px;
+        }
+        .field-error {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
     </style>
 </head>
 <body>
 <div class="signup-container">
 
     <h2>회원가입</h2>
-    <form action="#" method="post">
-        <input type="text" name="id" placeholder="ID" required>
-        <input type="password" name="password" placeholder="Password" required>
-        <input type="text" name="name" placeholder="이름" required>
-        <input type="text" name="nickname" placeholder="닉네임" required>
-        <input type="text" name="phone" placeholder="전화번호" required>
-        <input type="text" name="city" placeholder="도시" required>
-        <input type="text" name="street" placeholder="거리" required>
-        <input type="text" name="zipcode" placeholder="우편번호" required>
-        <input type="submit" value="회원가입">
+    <form action="join" th:action="@{/join}" th:object="${joinMember}" method="post">
+
+        <div th:if="${#fields.hasGlobalErrors()}">
+            <p class="field-error" th:each="err : ${#fields.globalErrors()}"
+               th:text="${err}">전체 오류 메시지</p>
+        </div>
+
+        <div>
+            <input type="text" name="id" th:field="*{userId}" th:errorclass="field-error" placeholder="ID" required>
+            <div class="field-error" th:errors="*{userId}"/>
+        </div>
+
+        <div>
+            <input type="password" name="password" th:field="*{password}" th:errorclass="field-error" placeholder="Password" required>
+            <div class="field-error" th:errors="*{password}"/>
+        </div>
+
+        <div>
+            <input type="text" name="name" th:field="*{name}" th:errorclass="field-error" placeholder="이름" required>
+            <div class="field-error" th:errors="*{name}"/>
+        </div>
+
+        <div>
+            <input type="text" name="nickname" th:field="*{nickName}" th:errorclass="field-error" placeholder="닉네임" required>
+            <div class="field-error" th:errors="*{nickName}"/>
+        </div>
+
+        <div>
+            <input type="text" name="phone" th:field="*{phone}" th:errorclass="field-error" placeholder="전화번호" required>
+            <div class="field-error" th:errors="*{phone}"/>
+        </div>
+
+        <div>
+            <input type="text" name="city" th:field="*{address.city}" th:errorclass="field-error" placeholder="도시" required>
+            <div class="field-error" th:errors="*{address.city}"/>
+        </div>
+
+        <div>
+            <input type="text" name="street" th:field="*{address.street}" th:errorclass="field-error" placeholder="거리" required>
+            <div class="field-error" th:errors="*{address.street}"/>
+        </div>
+
+        <div>
+            <input type="text" name="zipcode" th:field="*{address.zipcode}" th:errorclass="field-error" placeholder="우편번호" required>
+            <div class="field-error" th:errors="*{address.zipcode}"/>
+        </div>
+
+        <div>
+            <input type="submit" value="회원가입">
+        </div>
     </form>
 </div>
 </body>

@@ -5,12 +5,12 @@ import jakarta.persistence.Embeddable;
 import java.util.Objects;
 
 @Embeddable
-public class Address {
-    private String city;
+    public class Address {
+        private String city;
 
-    private String street;
+        private String street;
 
-    private String zipcode;
+        private String zipcode;
 
     public Address(){
 

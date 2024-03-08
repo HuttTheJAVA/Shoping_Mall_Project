@@ -44,4 +44,15 @@ public class MemberRepository {
         return em.find(Member.class,id);
     }
 
+    public Member findByUserId(String userId){
+        String jpql = "SELECT m FROM Member m WHERE m.userId = :userId";
+        List<Member> members = em.createQuery(jpql,Member.class)
+                .setParameter("userId",userId)
+                .getResultList();
+        if(members.isEmpty()){
+            return null;
+        }
+        return members.get(0); // user_id는 유니크라서 memebers는 0 또는 1개의 멤버만을 포함.
+    }
+
 }

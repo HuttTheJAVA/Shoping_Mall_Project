@@ -1,5 +1,5 @@
 package com.example.shoppingMall.domain;
 
 public enum Level {
-    USER,ADMIN
+    ROLE_USER,ROLE_ADMIN
 }

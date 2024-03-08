@@ -7,7 +7,9 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}"/>
 </head>
 <body>
-<div th:replace="header.html"></div>
+<div th:replace="header.html"></div> <!--이 부분 이제 지원 안할거라서 Please use the complete syntax of fragment expressions instead -->
+<!--                                    ("~{header.html}"). The old, unwrapped syntax for fragment expressions -->
+<!--                                    will be removed in future versions of Thymeleaf.-->
 
 <section>
 <!--    이 부분 th:each로 바꿔야함-->
