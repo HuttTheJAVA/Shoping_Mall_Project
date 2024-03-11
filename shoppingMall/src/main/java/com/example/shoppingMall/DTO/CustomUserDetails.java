@@ -23,7 +23,7 @@ public class CustomUserDetails implements UserDetails {
             @Override
             public String getAuthority() {
                 return member.getLevel().name();
-            }
+            }  //권한 확인 시 "RULE_ADMIN","RULE_USER"형식으로 확인해야 함.
         });
         return collection;
     }
