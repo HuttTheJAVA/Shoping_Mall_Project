@@ -44,13 +44,13 @@ public class SecurityConfig{
                         authorize.requestMatchers("/login", "/join","/","/resources/**").permitAll()
                 .anyRequest().authenticated())
                 .formLogin(formLogin -> formLogin
-                        .loginPage("/login")
-                        .loginProcessingUrl("/login")
+                        .loginPage("/login")    // 해당 url을 GetMapping으로 가지는 컨트롤러로 요청이 보내진다.
+                        .loginProcessingUrl("/login") // 이 url을 PostMapping으로 가지는 컨트롤러로 보내는 것이 아닌 이 url로 오는 요청에 대해 Spring Security 인증을 한다는 것이다. 즉 postMapping("/login") 컨트롤러로 가지 않고 Spring security가 "/login" 경로로 오는 요청을 가로채 인증을 수행한다는 말이다.
                         .defaultSuccessUrl("/")
                         .usernameParameter("userId")
                         .permitAll());
 
-        http.logout(logout->logout.logoutSuccessUrl("/login").invalidateHttpSession(true));
+        http.logout(logout->logout.logoutSuccessUrl("/").invalidateHttpSession(true));
 
         http.csrf(csrf->csrf.disable());
 
