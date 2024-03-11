@@ -30,14 +30,15 @@ public class CartItemRepositoryTest {
     public void saveCartItem(){
         //given
         //회원 등록
-        Member member = new Member.Builder("chy")
+        Member member = Member.builder()
+                .userId("adkdkdk")
                 .password("123")
                 .name("최환용")
                 .nickName("okMe")
                 .address(new Address("city of seoul","moo","1412"))
                 .phone("010-7359-4777")
                 .level(Level.ROLE_USER)
-                .date(LocalDateTime.now())
+                .registerDate(LocalDateTime.now())
                 .build();
 
         //장바구니 및 아이템 생성

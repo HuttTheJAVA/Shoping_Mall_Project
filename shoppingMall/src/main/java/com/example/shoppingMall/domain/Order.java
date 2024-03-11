@@ -15,7 +15,7 @@ import static jakarta.persistence.CascadeType.*;
 import static jakarta.persistence.FetchType.*;
 
 @Entity
-@Getter
+@Data
 @Table(name = "ORDERS") // Order는 H2 예약어라서 s를 붙혀주자
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Order {

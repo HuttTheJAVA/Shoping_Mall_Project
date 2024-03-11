@@ -14,7 +14,7 @@ import static jakarta.persistence.FetchType.*;
 @Entity
 @Data
 @Table(name = "cart")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PROTECTED) //protected는 상속받은 클래스나 같은 패키지에 존재하는 클래스까지는 접근 가능.
 public class Cart {
     @Id
     @GeneratedValue

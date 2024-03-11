@@ -3,9 +3,13 @@ package com.example.shoppingMall.domain;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static jakarta.persistence.CascadeType.*;
@@ -18,7 +22,7 @@ import static jakarta.persistence.FetchType.*;
 })
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member {
+public class Member implements UserDetails {
     @Id @GeneratedValue
     @Column(name = "MEMBER_ID")
     private Long id;
@@ -46,8 +50,8 @@ public class Member {
 
     //TODO 멤버를 생성하면 하나의 카트도 같이 생성해줘야 한다.
     @OneToOne(mappedBy = "member",fetch = LAZY,cascade = PERSIST)
-    private Cart cart;
-    @OneToMany(mappedBy = "member",cascade = ALL)
+    private Cart cart = new Cart();     // member 생성 시 cart도 생성
+    @OneToMany(mappedBy = "member") //xToMany는 기본 fetch가 LAZY다. Order는 따로 persist하자.
     private List<Order> orders = new ArrayList<>();
 
     // 연관관계 편의 메서드 (Cart)
@@ -56,69 +60,52 @@ public class Member {
         cart.setMember(this);
     }
 
-    private Member(Builder builder){
-        this.userId = builder.userId;
-        this.password = builder.password;
-        this.name = builder.name;
-        this.nickName = builder.nickName;
-        this.address = builder.address;
-        this.phone = builder.phone;
-        this.level = builder.level;
-        this.registerDate = builder.register_date;
+    public void setOrder(Order order) {
+        if (order != null) {
+            orders.add(order);
+            order.setMember(this);
+        }
     }
 
-    public static class Builder{
-        private String userId;
-        private String password;
-        private String name;
-        private String nickName;
-        @Embedded
-        private Address address;
-        private String phone;
-        private Level level;
-        private LocalDateTime register_date;
-        public Builder(String id){
-            this.userId = id;
-        }
+    @Builder //Cart는 따로 생성, Order는 주문 발생 시 생성 (Persist도 둘 다 따로 )
+    public Member(String userId,String password,String name,String nickName,Address address,String phone,LocalDateTime registerDate,Level level) {
+        this.userId = userId;
+        this.password = password;
+        this.name = name;
+        this.nickName = nickName;
+        this.address = address;
+        this.phone = phone;
+        this.registerDate = registerDate;
+        this.level = level;
+    }
 
-        public Builder password(String password){
-            this.password = password;
-            return this;
-        }
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(this.level.name())); // 권한이 있는지 확인하는 코드는 "ROLE_ADMIN" 이런 식으로 확인해야 함.
+    }
 
-        public Builder name(String name){
-            this.name = name;
-            return this;
-        }
+    @Override
+    public String getUsername() {
+        return userId;
+    }
 
-        public Builder nickName(String nickName){
-            this.nickName = nickName;
-            return this;
-        }
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
 
-        public Builder address(Address address){
-            this.address = address;
-            return this;
-        }
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
 
-        public Builder phone(String phone){
-            this.phone = phone;
-            return this;
-        }
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
 
-        public Builder level(Level level){
-            this.level = level;
-            return this;
-        }
-
-        public Builder date(LocalDateTime registDate){
-            this.register_date = registDate;
-            return this;
-        }
-
-
-        public Member build(){
-            return new Member(this);
-        }
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }

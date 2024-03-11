@@ -1,9 +1,11 @@
 package com.example.shoppingMall.domain.service;
 
 import com.example.shoppingMall.DTO.MemberDTO;
+import com.example.shoppingMall.domain.Cart;
 import com.example.shoppingMall.domain.Level;
 import com.example.shoppingMall.domain.Member;
 import com.example.shoppingMall.repository.MemberRepository;
+import com.example.shoppingMall.repository.MemberRepository_Security;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +20,7 @@ import java.time.LocalDateTime;
 @Service
 @RequiredArgsConstructor
 public class JoinService {
-    @Autowired
-    private final MemberRepository memberRepository;
-
-    @Autowired
+    private final MemberRepository_Security userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
 
@@ -30,22 +29,18 @@ public class JoinService {
      */
 
     @Transactional
-    public Long join(@Valid @ModelAttribute MemberDTO.Join joinMember){
-        try{
-            Member member = new Member.Builder(joinMember.getUserId())
-                    .password(bCryptPasswordEncoder.encode(joinMember.getPassword())) // bcrypt 암호화로 사용자 비밀번호 저장.
-                    .name(joinMember.getName())
-                    .nickName(joinMember.getNickName())
-                    .address(joinMember.getAddress())
-                    .phone(joinMember.getPhone())
-                    .level(Level.ROLE_USER)
-                    .date(LocalDateTime.now())
-                    .build();
-
-            Long id = memberRepository.Join(member);
-            return id;
-        }catch (DataIntegrityViolationException e){
-            throw e;
-        }
+    public Long join(MemberDTO.Join dto){
+        return userRepository
+                .save(Member.builder()
+                        .userId(dto.getUserId())
+                        .level(Level.ROLE_ADMIN)
+                        .password(bCryptPasswordEncoder.encode(dto.getPassword()))
+                        .name(dto.getName())
+                        .nickName(dto.getNickName())
+                        .address(dto.getAddress())
+                        .phone(dto.getPhone())
+                        .registerDate(LocalDateTime.now())
+                        .build()).getId();
     }
+
 }
