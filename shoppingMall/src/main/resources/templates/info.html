@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Member Information</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Custom CSS -->
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+
+        .member-card {
+            width: 800px;
+            margin: auto;
+            margin-top: 50px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+        }
+
+        .member-card-header {
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 10px 10px 0 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .member-info {
+            padding: 15px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .member-info label {
+            font-weight: bold;
+            color: #6c757d;
+        }
+
+        .member-info span {
+            padding: 5px 15px;
+        }
+
+        /* 수직선 스타일 */
+        .vertical-line {
+            border-left: 1px solid #dee2e6;
+            height: 100%;
+            margin: 0 15px;
+        }
+    </style>
+
+</head>
+
+<body>
+<div th:replace="header.html"></div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="member-card">
+                <div class="member-card-header">
+                    <h3 class="mb-0">회원 정보</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="member-info">
+                                <label for="name">이름</label>
+                                <span id="name" th:text="${member.name}"></span>
+                            </div>
+                            <div class="member-info">
+                                <label for="nickName">닉네임</label>
+                                <span id="nickName" th:text="${member.nickName}"></span>
+                            </div>
+                            <div class="member-info">
+                                <label for="phone">전화번호</label>
+                                <span id="phone" th:text="${member.phone}"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="member-info">
+                                <label for="level">레벨</label>
+                                <span id="level" th:text="${member.level == 'ROLE_USER' ? '일반 회원' : '관리자'}"></span>
+                            </div>
+                            <div class="member-info">
+                                <label for="joinDate">가입일</label>
+                                <span id="joinDate" th:text="${joinDate}"></span>
+                            </div>
+                            <div class="member-info">
+                                <label for="address">주소</label>
+                                <span th:text="${member.address.city + ' ' + member.address.street + ' ' + member.address.zipcode}"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

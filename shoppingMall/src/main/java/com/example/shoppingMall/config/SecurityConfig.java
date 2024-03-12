@@ -52,6 +52,11 @@ public class SecurityConfig{
 
         http.logout(logout->logout.logoutSuccessUrl("/").invalidateHttpSession(true));
 
+        http
+                .sessionManagement((auth)->auth
+                        .maximumSessions(1) // 한 계정에 최대 허용 세션 수 = 다중 접속 허용 수
+                        .maxSessionsPreventsLogin(false)); // 허용 세션 수 초과 시 true: 새로운 로그인 차단, false: 기존 세션 하나 삭제 = 기존 로그인 사용자가 로그아웃 됨.
+
         http.csrf(csrf->csrf.disable());
 
         return http.build();

@@ -18,8 +18,8 @@ public class Item {
     private String name;
     private Long price;
     private Long quantity;
-    private String itemDetail;
-    // private 이미지 상품이미지;
+
+    private String storeFileName; //file.dir 경로에 저장된 파일의 고유 이름.
 
 
 }

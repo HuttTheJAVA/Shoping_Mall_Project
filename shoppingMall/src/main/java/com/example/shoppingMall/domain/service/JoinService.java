@@ -33,7 +33,7 @@ public class JoinService {
         return userRepository
                 .save(Member.builder()
                         .userId(dto.getUserId())
-                        .level(Level.ROLE_ADMIN)
+                        .level(Level.ROLE_USER)
                         .password(bCryptPasswordEncoder.encode(dto.getPassword()))
                         .name(dto.getName())
                         .nickName(dto.getNickName())
