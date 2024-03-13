@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>아이템 상세</title>
+  <style>
+    .container {
+      margin-top: 100px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 50px; /* 이미지와 나머지 영역 사이의 간격 설정 */
+    }
+    .item-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .item-image {
+      max-width: 300px; /* 이미지 최대 너비 설정 */
+      text-align: center; /* 가운데 정렬 */
+    }
+    .item-image img {
+      width: 100%; /* 이미지를 부모 요소에 맞게 조정 */
+      height: auto;
+    }
+    .item-details {
+      border: 1px solid black;
+      padding: 20px;
+      box-sizing: border-box;
+      width: 300px; /* 너비 조절 */
+    }
+    .small-details {
+      border: 1px solid black;
+      border-top: none; /* 윗테두리 제거 */
+      padding: 10px;
+      box-sizing: border-box;
+      text-align: center; /* 가운데 정렬 */
+      cursor: pointer; /* 마우스 커서 모양 변경 */
+      width: 300px; /* 너비 조절 */
+    }
+    .quantity {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .quantity input {
+      width: 50px;
+      text-align: center;
+    }
+    .quantity button {
+      margin: 0 5px;
+      padding: 1.25px 8px;
+    }
+    .button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div th:replace="header.html"></div>
+
+<div class="container">
+  <div class="item-container">
+    <div class="item-image">
+      <img th:src="|/item/images/${item.storeFileName}|" width="300" height="300"/>
+    </div>
+  </div>
+  <div class="item-container">
+    <div class="item-details">
+      <h2>아이템 상세</h2>
+      <p th:text="${item.name}"></p>
+      <p>MTPD3KH/A</p>
+      <p id="priceDisplay" th:text="'₩: ' + ${item.price}"></p> <!-- 초기 가격 설정 -->
+      <!-- 원하는 아이템 상세 정보 추가 -->
+      <div class="quantity">
+        <button id="decrease">-</button>
+        <input type="number" id="quantity" value="1" min="1" max="999"> <!-- 최소값과 최대값 설정 -->
+        <button id="increase">+</button>
+      </div>
+    </div>
+    <div class="small-details" id="buyNow">
+      바로구매
+    </div>
+    <div class="small-details" id="addToCart">
+      장바구니
+    </div>
+  </div>
+</div>
+
+<script th:inline="javascript">
+  // 수량 관련 요소 선택
+  const decreaseBtn = document.getElementById("decrease");
+  const increaseBtn = document.getElementById("increase");
+  const quantityInput = document.getElementById("quantity");
+  const priceDisplay = document.getElementById("priceDisplay");
+
+  // Thymeleaf로부터 받은 가격
+  const itemPrice = [[${item.price}]];
+
+  // "-" 버튼 클릭 시 수량 감소
+  decreaseBtn.addEventListener("click", function() {
+    let quantity = parseInt(quantityInput.value);
+    if (quantity > 1) {
+      quantity--;
+      quantityInput.value = quantity;
+      updatePrice(quantity);
+    }
+  });
+
+  // "+" 버튼 클릭 시 수량 증가
+  increaseBtn.addEventListener("click", function() {
+    let quantity = parseInt(quantityInput.value);
+    if (quantity < 999) { // 최대값 체크
+      quantity++;
+      quantityInput.value = quantity;
+      updatePrice(quantity);
+    }
+  });
+
+  // 가격 업데이트 함수
+  function updatePrice(quantity) {
+    const totalPrice = itemPrice * quantity;
+    priceDisplay.textContent = "₩: " + totalPrice;
+  }
+
+  // 수량 입력 필드 변경 이벤트
+  quantityInput.addEventListener("change", function() {
+    let quantity = parseInt(quantityInput.value);
+    if (quantity < 1) {
+      quantityInput.value = 1; // 음수 입력 시 1로 초기화
+    } else if (quantity > 999) {
+      quantityInput.value = 999; // 999를 초과한 값은 999로 설정
+    }
+    updatePrice(quantity);
+  });
+</script>
+
+</body>
+</html>

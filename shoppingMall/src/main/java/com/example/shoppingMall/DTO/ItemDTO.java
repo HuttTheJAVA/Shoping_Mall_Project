@@ -15,8 +15,8 @@ public class ItemDTO {
     public static class Upload{
         private Long Id;
         private Long price;
-        private String Name;
+        private String name;
         private Long quantity;
-        private MultipartFile attachFile;
+        private MultipartFile file;
     }
 }

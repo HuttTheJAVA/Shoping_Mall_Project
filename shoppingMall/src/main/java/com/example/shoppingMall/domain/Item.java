@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -18,8 +19,14 @@ public class Item {
     private String name;
     private Long price;
     private Long quantity;
-
     private String storeFileName; //file.dir 경로에 저장된 파일의 고유 이름.
 
+    @Builder
+    public Item(String name,Long price,Long quantity,String storeFileName){
+        this.name = name;
+        this.price = price;
+        this.quantity = quantity;
+        this.storeFileName = storeFileName;
+    }
 
 }

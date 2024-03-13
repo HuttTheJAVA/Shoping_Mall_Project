@@ -1,50 +1,56 @@
 package com.example.shoppingMall.web;
 
+import com.example.shoppingMall.DTO.ItemDTO;
+import com.example.shoppingMall.domain.Item;
+import com.example.shoppingMall.domain.service.ItemService;
+import com.example.shoppingMall.repository.FileStore;
+import com.example.shoppingMall.repository.ItemRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 
-@Configuration
 @Controller
 @RequestMapping("/item")
+@RequiredArgsConstructor
 public class ItemController {
-    
-    @Value("${file.dir}")
-    private String fileDir;
-    
+    private final ItemService itemService;
+    private final FileStore fileStore;
     @GetMapping("/upload")
     public String newItem(){
-        System.out.println("WESTSIDE~");
         return "upload-form";
     }
-
     @PostMapping("/upload")
-    public String saveFile(@RequestParam String itemName,
-                           @RequestParam MultipartFile file,
-                           HttpServletRequest request) throws IOException{
+    public String saveFile(@ModelAttribute ItemDTO.Upload itemDTO,
+                           RedirectAttributes redirectAttributes) throws IOException{
 
-        if(!file.isEmpty()){
-            String fullpath = fileDir + file.getOriginalFilename();
-            file.transferTo(new File(fullpath));
-        }
+        Long id = itemService.save(itemDTO);
+        redirectAttributes.addAttribute("itemId", id);
 
-        return "upload-form";
+        return "redirect:/item/{itemId}";
     }
 
     @GetMapping("/{itemId}")
-    public String item(){
-        //아이템 상세 보여주기 컨트롤러
-        return "itemId에 해당하는 아이템을 넘겨준다";
+    public String item(@PathVariable Long itemId, Model model){
+        Item item = itemService.findById(itemId);
+        model.addAttribute("item",item);
+        return "item-view";
     }
 
-
+    @ResponseBody
+    @GetMapping("images/{fileName}")
+    public Resource itemImage(@PathVariable String fileName) throws MalformedURLException{
+        return new UrlResource("file:"+fileStore.getFullPath(fileName));
+    }
 }

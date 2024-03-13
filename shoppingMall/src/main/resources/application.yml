@@ -32,4 +32,4 @@ server:
     session:
       timeout: 900
 file:
-  dir: C:/Shoping_mall_project/ItemImage/
+  dir: C:/spring_tmp/
