@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 @Entity
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -27,6 +29,20 @@ public class Item {
         this.price = price;
         this.quantity = quantity;
         this.storeFileName = storeFileName;
+    }
+
+    // 아이템 객체간 이름이 같으면 같은 아이템으로 구분.
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Item item = (Item) o;
+        return Objects.equals(name, item.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
     }
 
 }

@@ -1,20 +1,13 @@
 package com.example.shoppingMall.domain.service;
 
 import com.example.shoppingMall.DTO.MemberDTO;
-import com.example.shoppingMall.domain.Cart;
 import com.example.shoppingMall.domain.Level;
 import com.example.shoppingMall.domain.Member;
-import com.example.shoppingMall.repository.MemberRepository;
 import com.example.shoppingMall.repository.MemberRepository_Security;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ModelAttribute;
-
 import java.time.LocalDateTime;
 
 @Service

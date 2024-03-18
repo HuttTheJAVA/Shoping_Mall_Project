@@ -6,6 +6,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public class CartItemRepository {
     @PersistenceContext
@@ -16,7 +18,15 @@ public class CartItemRepository {
         em.persist(cartItem);
         return cartItem.getId();
     }
-    public OrderItem findById(Long id){
-        return em.find(OrderItem.class,id);
+    public CartItem findById(Long id){
+        return em.find(CartItem.class,id);
+    }
+
+    public List<CartItem> findByMemberId(Long id){
+        String jpql = "SELECT ci From CartItem ci WHERE ci.member.id = :MEMBER_ID";
+        List<CartItem> cartItems = em.createQuery(jpql,CartItem.class)
+                .setParameter("MEMBER_ID",id)
+                .getResultList();
+        return cartItems;
     }
 }

@@ -92,6 +92,12 @@
                                 <span th:text="${member.address.city + ' ' + member.address.street + ' ' + member.address.zipcode}"></span>
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="member-info">
+                                <label for="point">포인트</label>
+                                <span id="point" th:text="${member.point}"></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

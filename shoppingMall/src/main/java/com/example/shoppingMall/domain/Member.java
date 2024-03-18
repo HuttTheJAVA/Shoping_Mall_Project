@@ -48,17 +48,17 @@ public class Member implements UserDetails {
     private Level level;
     private LocalDateTime registerDate;
 
-    //TODO 멤버를 생성하면 하나의 카트도 같이 생성해줘야 한다.
-    @OneToOne(mappedBy = "member",fetch = LAZY,cascade = PERSIST)
-    private Cart cart = new Cart();     // member 생성 시 cart도 생성
+    private Long point = 0l;
+//    @OneToOne(mappedBy = "member",fetch = LAZY,cascade = PERSIST)
+//    private Cart cart = new Cart();     // member 생성 시 cart도 생성
+//    public void setCart(Cart cart) {
+//        this.cart = cart;
+//        cart.setMember(this);
+//    }
+
     @OneToMany(mappedBy = "member") //xToMany는 기본 fetch가 LAZY다. Order는 따로 persist하자.
     private List<Order> orders = new ArrayList<>();
-
     // 연관관계 편의 메서드 (Cart)
-    public void setCart(Cart cart) {
-        this.cart = cart;
-        cart.setMember(this);
-    }
 
     public void setOrder(Order order) {
         if (order != null) {

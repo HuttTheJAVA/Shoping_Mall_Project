@@ -20,8 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService{
     private final MemberRepository_Security userRepository;
-
-
     @Override
     @Transactional // 조회는 트랜잭션을 거는 것이 좋지 않지만 이렇게 하지 않으면 "could not initialize proxy - no Session 에러"가 발생한다. 이부분은 좀 더 고민해보자.
     public Member loadUserByUsername(String userId) throws UsernameNotFoundException {

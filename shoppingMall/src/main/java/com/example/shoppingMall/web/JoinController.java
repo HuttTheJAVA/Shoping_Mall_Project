@@ -27,6 +27,10 @@ public class JoinController {
         if(bindingResult.hasErrors()){
             return "join";
         }
+        if(joinMember.getUserId().equals("anonymousUser")){ //anonymousUser는 로직에서 인증여부로 사용되기 때문에 해당 닉네임은 못 짓게 막아 놈.
+            bindingResult.reject("joinfail","이미 존재하는 아이디나 닉네임입니다.");
+            return "join";
+        }
         try{
             Long id = joinService.join(joinMember);
         }catch (DataIntegrityViolationException e){
