@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>수량 변경 페이지</title>
+  <script type="text/javascript">
+        function decreaseQuantity() {
+            var quantityElement = document.getElementById('quantity');
+            var quantity = parseInt(quantityElement.value);
+            if (quantity > 1) {
+                quantity--;
+                quantityElement.value = quantity;
+            }
+        }
+
+        function increaseQuantity() {
+            var quantityElement = document.getElementById('quantity');
+            var quantity = parseInt(quantityElement.value);
+            quantity++;
+            quantityElement.value = quantity;
+        }
+    </script>
+</head>
+<body>
+<h1>상품 수량 변경 페이지</h1>
+<input type="button" value="-" onclick="decreaseQuantity()">
+<input type="number" id="quantity" value="1" min="1">
+<input type="button" value="+" onclick="increaseQuantity()">
+</body>
+</html>

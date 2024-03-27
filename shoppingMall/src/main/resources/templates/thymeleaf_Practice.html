@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Cart Items</title>
+  <!-- Include any necessary JavaScript libraries -->
+  <script th:inline="javascript">
+        /*<![CDATA[*/
+        function processCartItem(id, quantity) {
+            // Your JavaScript function logic here
+            console.log("Item ID:", id);
+            console.log("Quantity:", quantity);
+            // You can perform any operations with id and quantity here
+        }
+        /*]]>*/
+    </script>
+</head>
+<body>
+<div th:each="cartItem : ${cartItems}">
+  <!-- Accessing id and quantity of each cartItem and passing them as arguments to the JavaScript function -->
+  <button th:onclick="'processCartItem(\'' + ${cartItem.id} + '\', \'' + ${cartItem.quantity} + '\')'">
+    Process Item
+  </button>
+</div>
+</body>
+</html>

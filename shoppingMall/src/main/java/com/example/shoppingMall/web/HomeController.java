@@ -43,4 +43,9 @@ public class HomeController {
     public String contact(){
         return "contactus";
     }
+
+    @GetMapping("quantity")
+    public String quantity(){
+        return "quantity";
+    }
 }

@@ -10,56 +10,197 @@
             width: 100px;
             height: 100px;
         }
+
+        .center {
+            margin: 0 auto;
+            width: 50%; /* 원하는 폭으로 설정 */
+        }
+
+        .footer {
+            display: none; /* 일단 숨겨둠 */
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #f8f9fa;
+            text-align: center;
+        }
+
+        /* 아래의 스타일은 td 안의 내용을 가운데 정렬합니다. */
+        td {
+            text-align: center;
+        }
+
     </style>
 </head>
 <body>
-<h1>장바구니</h1>
+<div th:replace="header.html"></div>
+<div class="center">
+    <h1>장바구니</h1>
 
-<table border="1">
-    <thead>
-    <tr>
-        <th>상품 이미지</th>
-        <th>상품 이름</th>
-        <th>수량</th>
-        <th>가격</th>
-        <th>합계</th>
-        <th>삭제</th>
-    </tr>
-    </thead>
-    <tbody>
-    <!-- 여기에 타임리프 루프를 사용하여 장바구니 항목을 출력합니다. -->
-    <tr th:each="cartItem : ${cartItems}">
-        <td><img th:src="|/item/images/${cartItem.item.storeFileName}|" alt="상품 이미지" class="product-image"></td>
-        <td th:text="${cartItem.item.name}"></td>
-        <td>
-            <button onclick="updateQuantity(${cartItemIndex.index}, -1)">-</button>
-            <span th:text="${cartItem.quantity}"></span>
-            <button onclick="updateQuantity(${cartItemIndex.index}, 1)">+</button>
-        </td>
-        <td th:text="${cartItem.quantity * cartItem.item.price}"></td>
-        <td><button onclick="removeItem(${cartItemIndex.index})">X</button></td>
-    </tr>
-    </tbody>
-</table>
+    <table border="1">
+        <thead>
+        <tr>
+            <th>상품 이미지</th>
+            <th>상품 이름</th>
+            <th>수량</th>
+            <th>가격</th>
+            <th>합계</th>
+            <th>삭제</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- 여기에 타임리프 루프를 사용하여 장바구니 항목을 출력합니다. -->
+        <tr th:each="cartItem, index : ${cartItems}">
+            <td><img th:src="|/item/images/${cartItem.item.storeFileName}|" alt="상품 이미지" class="product-image"></td>
+            <td th:text="${cartItem.item.name}"></td>
+            <td>
+                <span th:id="'quantity_' + ${index.index}" th:text="${cartItem.quantity}"></span>
+                <button th:attr="data-itemName=${cartItem.item.name}, data-CartItemId=${cartItem.id}, data-quantity=${cartItem.quantity}, data-index=${index.index}, data-itemId=${cartItem.item.id}"
+                        onclick="processCartItem(this.getAttribute('data-CartItemId'), this.getAttribute('data-itemName'), this.getAttribute('data-quantity'), this.getAttribute('data-index'), this.getAttribute('data-itemId'), -1)">
+                    -
+                </button>
+                <button th:attr="data-itemName=${cartItem.item.name}, data-CartItemId=${cartItem.id}, data-quantity=${cartItem.quantity}, data-index=${index.index}, data-itemId=${cartItem.item.id}"
+                        onclick="processCartItem(this.getAttribute('data-CartItemId'),this.getAttribute('data-itemName'), this.getAttribute('data-quantity'), this.getAttribute('data-index'), this.getAttribute('data-itemId'), 1)">
+                    +
+                </button>
+            </td>
+            <td>
+                <span th:id="'price_' + ${index.index}" th:text="${cartItem.item.price}"></span>
+            </td>
+            <td>
+                <span th:id="'total_' + ${index.index}" th:text="${cartItem.item.price * cartItem.quantity}"></span>
+            </td>
+            <td>
+                <button th:attr="data-itemId=${cartItem.item.id} ,data-CartItemId=${cartItem.id}" onclick="deleteCartItem(this.getAttribute('data-itemId'),this.getAttribute('data-CartItemId'))">x</button>
+            </td>
+<!--            at here-->
+        </tr>
 
-<p>총 구매 금액: <span th:text="${totalPrice}"></span></p>
-<button>구매하기</button>
+        </tbody>
+    </table>
 
-<script>
-        function updateQuantity(index, change) {
-            var quantityElement = document.querySelector('tbody').getElementsByTagName('tr')[index].getElementsByTagName('td')[2].getElementsByTagName('span')[0];
-            var newQuantity = parseInt(quantityElement.textContent) + change;
-            if (newQuantity > 0) {
-                quantityElement.textContent = newQuantity;
-                // 여기에 수량 변경에 따른 가격 업데이트 로직 추가 가능
-            }
-        }
+    <p>총 구매 금액: <span id="totalPrice"></span></p>
+    <button>구매하기</button>
+    <br><br>
+    <br><br>
+    <br><br>
+    <br><br>
+</div>
 
-        function removeItem(index) {
-            var rowToRemove = document.querySelector('tbody').getElementsByTagName('tr')[index];
-            rowToRemove.remove();
-            // 여기에 장바구니에서 상품 제거 후 총 구매 금액 업데이트 로직 추가 가능
-        }
-    </script>
+<div class="footer" id="footer">
+    <div th:replace="bottom.html"></div>
+</div>
+
 </body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script th:inline="javascript">
+
+    /*<![CDATA[*/
+    function deleteCartItem(cart_item_no,CartItemId) {
+        var url = "/cartItemDelete"
+
+        if(CartItemId !== null){
+		    url = "/userCartItemDelete";
+		}
+
+        $.ajax({
+            type : "POST",
+            url: url,
+            dataType : "json",
+            data : {"cart_item_no" : cart_item_no,"CartItemId" : CartItemId},
+            error : function(request, status, error){
+<!--            alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);-->
+<!--                window.location.href="login";는 login을 요구할 때 동작하는 것이 아니라 그냥 이 function을 실행시킬 때 에러가 나면 실행하게 짠 코드이다. 따라서 정답은 아님.-->
+                window.location.href="login";
+
+            },
+            success : function(data){
+                if(data == 1){
+                    alert("삭제완료");
+                    location.reload();
+                }
+            }
+	    });
+    }
+    /*]]>*/
+
+    /*<![CDATA[*/
+    function processCartItem(cartItemId,name,quantity, index,itemId,change) {
+        // Your JavaScript function logic here
+        var quantityElement = document.getElementById('quantity_' + index);
+        var newQuantity = parseInt(quantityElement.textContent) + change;
+
+        if (newQuantity > 0) {
+            quantityElement.textContent = newQuantity;
+            var totalElement = document.getElementById('total_' + index);
+            var priceElement = document.getElementById('price_' + index); // 수정된 부분
+            var totalPrice = newQuantity * parseInt(priceElement.textContent); // 수정된 부분
+            totalElement.textContent = totalPrice;
+            var totalPrice = 0;
+            var totalElements = document.querySelectorAll('[id^=total_]');
+            totalElements.forEach(function(element) {
+                totalPrice += parseInt(element.textContent);
+            });
+            document.getElementById('totalPrice').textContent = totalPrice;
+
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'updateCookie', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        // 서버 응답 처리
+                        console.log('서버 응답:', xhr.responseText);
+                        // 여기서 필요한 추가 작업을 수행하세요
+                    } else {
+                        // 서버 응답이 에러인 경우
+                        console.error('서버 응답 에러:', xhr.status);
+                    }
+                }
+            };
+            var data = JSON.stringify({ itemId: itemId, quantity: newQuantity,cartItemId: cartItemId });
+            xhr.send(data);
+    }
+    /*]]>*/
+
+    // 페이지의 스크롤 위치가 가장 아래일 때 footer를 보여줌
+    window.addEventListener('scroll', function() {
+        var footer = document.getElementById('footer');
+        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+            footer.style.display = 'block';
+        } else {
+            footer.style.display = 'none';
+        }
+    });
+
+    // 페이지 높이에 따라 스크롤 위치를 조정하여 footer가 스크롤되지 않도록 함
+    window.addEventListener('DOMContentLoaded', function() {
+        var footer = document.getElementById('footer');
+        var pageHeight = document.body.scrollHeight;
+        var windowHeight = window.innerHeight;
+        if (pageHeight > windowHeight) {
+            window.scrollTo(0, pageHeight - windowHeight);
+            footer.style.display = 'block';
+        }
+    });
+
+    function sendDataToServer(cartItemId, change) {
+        // Ajax 호출을 통해 서버로 데이터를 전송합니다.
+        // 예를 들어 XMLHttpRequest를 사용할 수 있습니다.
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "your-server-endpoint", true);
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                // 성공적으로 서버에 데이터를 보냈을 때 수행할 작업
+                console.log("Data sent successfully!");
+            }
+        };
+        var data = JSON.stringify({ cartItemId: cartItemId, change: change });
+        xhr.send(data);
+    }
+    }
+</script>
 </html>

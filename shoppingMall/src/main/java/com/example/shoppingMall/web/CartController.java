@@ -1,5 +1,6 @@
 package com.example.shoppingMall.web;
 
+import com.example.shoppingMall.Cookie.CookieController;
 import com.example.shoppingMall.domain.CartItem;
 import com.example.shoppingMall.domain.Item;
 import com.example.shoppingMall.domain.Member;
@@ -35,45 +36,31 @@ public class CartController {
     private final MemberRepository memberRepository;
     private final FileStore fileStore;
 
+    private final CookieController cookieController;
     private final String anonymousUser = "anonymousUser";
-
     @GetMapping("cart")
-    public String cart(HttpServletRequest request,Model model){
+    public String cart(HttpServletRequest request,Model model,HttpServletResponse response){
         String userId = (String) request.getAttribute("id"); // 멤버 엔티티의 userId
         Member member = memberRepository.findByUserId(userId);
-        Cookie[] cookies = request.getCookies();
-        List<CartItem> cartItems = new ArrayList<>(); // 여기서 쿠키에 등록된 장바구니 상품들이 담김.
-        boolean cookieUsed = false;
-        if(cookies != null){
-            for(Cookie cookie: cookies){
-                if(cookie.getName().equals("Cart")){
-                    String cartProduct = cookie.getValue();
-                    String[] products = cartProduct.split("\\|");
-                    for (String product : products) {
-                        String[] productAndQuantity = product.split(":");
 
-                        Long productId = Long.valueOf(productAndQuantity[0]);
-                        Long quantity = Long.valueOf(productAndQuantity[1]);
+        String cookieString = cookieController.merge(request.getCookies());
+        List<CartItem> cartItems = cookieController.buildCartItemList(cookieString,member);
 
-                        Item item = itemService.findById(productId);
-
-                        CartItem cartItem = CartItem.builder().member(member).item(item).quantity(quantity).build();
-                        cartItems.add(cartItem);
-                        cookieUsed = true;
-                    }
-                    break;
-                }
-            }
-        }
         if(!userId.equals(anonymousUser)){
-            List<CartItem> UsercartItems = cartItemService.cartList(member.getId());
-            cartItems.addAll(UsercartItems);
+            cookieController.saveCookieCartItems(cartItems);
+            List<CartItem> member_CartItems = cartItemService.cartList(member.getId());
+            Cookie cookie = new Cookie("Cart","");
+            cookie.setMaxAge(0); // 기본 하루 유지
+            cookie.setPath("/");
+            response.addCookie(cookie);
+            model.addAttribute("cartItems",member_CartItems);
+        }else{
+            Cookie cookie = new Cookie("Cart",cookieString);
+            cookie.setMaxAge(1*24*60*60);
+            cookie.setPath("/");
+            response.addCookie(cookie);
+            model.addAttribute("cartItems",cartItems);
         }
-        cartItems = merge(cartItems);
-        if(!userId.equals(anonymousUser) && cookieUsed){ // 쿠키가
-
-        }
-        model.addAttribute("cartItems",cartItems);
 
         return "cart";
     }
@@ -91,20 +78,18 @@ public class CartController {
                     if (cookie.getName().equals("Cart")) {
                         // 기존 장바구니 값을 StringBuilder에 추가
                         cartValueBuilder.append(cookie.getValue());
-                        cartValueBuilder.append("|");
                         break;
                     }
                 }
             }
+            cartValueBuilder.append("|");  // 쿠키에 중복되는 itemId가 있어도 일단 뒤에 추가 한다. 중복 수량 병합은 장바구니 조회시 병함 됨.
             cartValueBuilder.append(itemId.toString());
             cartValueBuilder.append(":");
             cartValueBuilder.append(quantity.toString());
 
             String cartValue = cartValueBuilder.toString();
 
-            Cookie cookie = new Cookie("Cart",cartValue);
-            cookie.setMaxAge(1*24*60*60); // 기본 하루 유지
-            cookie.setPath("/");
+            Cookie cookie = cookieController.setCookie("Cart",cartValue,1*24*60*60,"/");
             response.addCookie(cookie);
 
             return "redirect:/item/{itemId}";

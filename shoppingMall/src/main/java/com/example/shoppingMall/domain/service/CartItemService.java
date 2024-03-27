@@ -6,6 +6,7 @@ import com.example.shoppingMall.domain.Member;
 import com.example.shoppingMall.repository.CartItemRepository;
 import com.example.shoppingMall.repository.ItemRepository;
 import com.example.shoppingMall.repository.MemberRepository;
+import com.example.shoppingMall.web.CartItemController;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +25,17 @@ public class CartItemService {
         Item item = itemRepository.findById(itemId);
         String filePath = itemRepository.findById(itemId).getStoreFileName();
         CartItem cartItem = CartItem.builder().member(member).quantity(quantity).item(item).build();
-        return cartItemRepository.saveCartItem(cartItem);
+
+        List<CartItem> result = cartItemRepository.findByMemberId_AND_itemId(member.getId(),itemId);
+        if(result.isEmpty()){
+            return cartItemRepository.saveCartItem(cartItem);
+        }else{
+            CartItem findCartItem = result.get(0);
+            Long default_Quantity = findCartItem.getQuantity();
+            Long UpdateQuantity = default_Quantity + cartItem.getQuantity();
+            cartItemRepository.updateQuantity(findCartItem.getId(),UpdateQuantity);
+            return findCartItem.getId();
+        }
     }
 
     public CartItem findById(Long id) {
@@ -37,5 +48,16 @@ public class CartItemService {
 
     public Long findMemberId(String userId){
         return memberRepository.findByUserId(userId).getId();
+    }
+
+    @Transactional
+    public void delete(Long id){
+        CartItem cartItem = cartItemRepository.findById(id);
+        cartItemRepository.delete(cartItem);
+    }
+
+    @Transactional
+    public void UpdateCartItemQuantity(Long id,Long newQuantity){
+        cartItemRepository.updateQuantity(id,newQuantity);
     }
 }
