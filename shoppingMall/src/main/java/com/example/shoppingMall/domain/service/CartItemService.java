@@ -23,18 +23,23 @@ public class CartItemService {
     public Long save(String userId,Long itemId,Long quantity){
         Member member = memberRepository.findByUserId(userId);
         Item item = itemRepository.findById(itemId);
-        String filePath = itemRepository.findById(itemId).getStoreFileName();
-        CartItem cartItem = CartItem.builder().member(member).quantity(quantity).item(item).build();
+
+        // 재고 수량을 넘지않게 제한.
+        Long maxQuantity = item.getQuantity();
+        quantity = Math.min(maxQuantity,quantity);
 
         List<CartItem> result = cartItemRepository.findByMemberId_AND_itemId(member.getId(),itemId);
         if(result.isEmpty()){
-            return cartItemRepository.saveCartItem(cartItem);
+            CartItem cartItem = CartItem.builder().member(member).quantity(quantity).item(item).build(); // 저장된 CartItem이 없을 경우만 객체 생성.
+            return this.saveCartItem(cartItem);
         }else{
             CartItem findCartItem = result.get(0);
             Long default_Quantity = findCartItem.getQuantity();
-            Long UpdateQuantity = default_Quantity + cartItem.getQuantity();
-            cartItemRepository.updateQuantity(findCartItem.getId(),UpdateQuantity);
-            return findCartItem.getId();
+            Long UpdateQuantity = default_Quantity + quantity;
+
+            // 재고 수량을 넘지않게 제한.
+            UpdateQuantity = Math.min(maxQuantity,UpdateQuantity);
+            return this.UpdateCartItemQuantity(findCartItem.getId(),UpdateQuantity);
         }
     }
 
@@ -55,9 +60,15 @@ public class CartItemService {
         CartItem cartItem = cartItemRepository.findById(id);
         cartItemRepository.delete(cartItem);
     }
+    @Transactional
+    public Long UpdateCartItemQuantity(Long id,Long newQuantity){
+        cartItemRepository.updateQuantity(id,newQuantity);
+        return id;
+    }
 
     @Transactional
-    public void UpdateCartItemQuantity(Long id,Long newQuantity){
-        cartItemRepository.updateQuantity(id,newQuantity);
+    public Long saveCartItem(CartItem cartItem){
+        return cartItemRepository.saveCartItem(cartItem);
     }
+
 }

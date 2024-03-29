@@ -56,12 +56,13 @@
             <td th:text="${cartItem.item.name}"></td>
             <td>
                 <span th:id="'quantity_' + ${index.index}" th:text="${cartItem.quantity}"></span>
-                <button th:attr="data-itemName=${cartItem.item.name}, data-CartItemId=${cartItem.id}, data-quantity=${cartItem.quantity}, data-index=${index.index}, data-itemId=${cartItem.item.id}"
-                        onclick="processCartItem(this.getAttribute('data-CartItemId'), this.getAttribute('data-itemName'), this.getAttribute('data-quantity'), this.getAttribute('data-index'), this.getAttribute('data-itemId'), -1)">
+                <button th:id="'minus_'+${index.index}" th:attr="data-itemName=${cartItem.item.name},data-max-quantity=${cartItem.item.quantity} ,data-CartItemId=${cartItem.id}, data-quantity=${cartItem.quantity}, data-index=${index.index}, data-itemId=${cartItem.item.id}"
+                        onclick="processCartItem(this.getAttribute('data-CartItemId'), this.getAttribute('data-itemName'), this.getAttribute('data-quantity'), this.getAttribute('data-index'), this.getAttribute('data-itemId'), -1,this.getAttribute('data-max-quantity'))">
                     -
                 </button>
-                <button th:attr="data-itemName=${cartItem.item.name}, data-CartItemId=${cartItem.id}, data-quantity=${cartItem.quantity}, data-index=${index.index}, data-itemId=${cartItem.item.id}"
-                        onclick="processCartItem(this.getAttribute('data-CartItemId'),this.getAttribute('data-itemName'), this.getAttribute('data-quantity'), this.getAttribute('data-index'), this.getAttribute('data-itemId'), 1)">
+                <button th:id="'plus_' + ${index.index}" th:attr="data-itemName=${cartItem.item.name},data-max-quantity=${cartItem.item.quantity}, data-CartItemId=${cartItem.id}, data-quantity=${cartItem.quantity}, data-index=${index.index}, data-itemId=${cartItem.item.id}"
+                        onclick="processCartItem(this.getAttribute('data-CartItemId'),this.getAttribute('data-itemName'), this.getAttribute('data-quantity'), this.getAttribute('data-index'), this.getAttribute('data-itemId'), 1,this.getAttribute('data-max-quantity'))"
+                        th:disabled="${cartItem.quantity == cartItem.item.quantity}">
                     +
                 </button>
             </td>
@@ -117,7 +118,6 @@
             },
             success : function(data){
                 if(data == 1){
-                    alert("삭제완료");
                     location.reload();
                 }
             }
@@ -126,12 +126,24 @@
     /*]]>*/
 
     /*<![CDATA[*/
-    function processCartItem(cartItemId,name,quantity, index,itemId,change) {
+    function processCartItem(cartItemId,name,quantity, index,itemId,change,max_quantity) {
         // Your JavaScript function logic here
         var quantityElement = document.getElementById('quantity_' + index);
         var newQuantity = parseInt(quantityElement.textContent) + change;
-
+        var plusButton = document.querySelector('#plus_' + index);
         if (newQuantity > 0) {
+
+            if(newQuantity >= max_quantity){
+                plusButton.disabled = true;
+                if(newQuantity > max_quantity){
+                    return;
+                }
+            }
+
+            if(newQuantity < max_quantity && plusButton.disabled){
+                plusButton.disabled = false;
+            }
+
             quantityElement.textContent = newQuantity;
             var totalElement = document.getElementById('total_' + index);
             var priceElement = document.getElementById('price_' + index); // 수정된 부분
@@ -162,6 +174,7 @@
             };
             var data = JSON.stringify({ itemId: itemId, quantity: newQuantity,cartItemId: cartItemId });
             xhr.send(data);
+        }
     }
     /*]]>*/
 
@@ -200,7 +213,6 @@
         };
         var data = JSON.stringify({ cartItemId: cartItemId, change: change });
         xhr.send(data);
-    }
     }
 </script>
 </html>

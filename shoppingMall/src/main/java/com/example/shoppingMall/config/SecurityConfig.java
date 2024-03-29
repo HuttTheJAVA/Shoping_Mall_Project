@@ -40,7 +40,7 @@ public class SecurityConfig{
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize ->
-                        authorize.requestMatchers("/login", "/join","/","/resources/**").permitAll() //TODO 아이템 이미지 렌더링 문제 해결하면 /** 지우기
+                        authorize.requestMatchers("/login", "/join","/","/resources/**","/**").permitAll() //TODO 아이템 이미지 렌더링 문제 해결하면 /** 지우기
                 .anyRequest().authenticated())
                 .formLogin(formLogin -> formLogin
                         .loginPage("/login")    // 해당 url을 GetMapping으로 가지는 컨트롤러로 요청이 보내진다.

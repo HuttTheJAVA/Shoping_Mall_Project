@@ -8,6 +8,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Online Store</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+
+    <style>
+        /* 카트 아이콘을 약간 아래로 이동시키는 스타일 */
+        .cart-icon {
+            vertical-align: middle;
+            margin-top: 1px; /* 원하는 만큼의 여백 설정 */
+        }
+    </style>
+
 </head>
 <body>
 <header>
@@ -23,6 +32,7 @@
     </ul>
     <ul>
         <!-- 로그인 상태 확인 후 링크 출력 -->
+        <li><a href="/cart"><img src="/images/cart-icon.png" alt="Cart" class="cart-icon" width="25"></a></li>
         <li th:if="${id == 'anonymousUser'}"><a href="/login">Login</a></li>
         <li th:if="${id == 'anonymousUser'}"><a href="/join">Sign Up</a></li>
         <li th:unless="${id == 'anonymousUser'}"><a th:href="@{'/info/' + ${id}}"><span th:text="${id + '님'}"></span></a></li>

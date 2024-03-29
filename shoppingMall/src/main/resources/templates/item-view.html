@@ -62,6 +62,34 @@
       border-radius: 5px;
       cursor: pointer;
     }
+    .quantity {
+      position: relative; /* 부모 요소를 기준으로 자식 요소를 위치시킬 수 있도록 설정 */
+    }
+    .quantity-message {
+      position: absolute; /* 절대 위치로 설정하여 부모 요소 내에서 위치 조정 */
+      bottom: calc(100% + 5px); /* 수량 입력 필드의 위에 위치하도록 설정 */
+      left: 50%; /* 가운데 정렬을 위해 수평 위치 조정 */
+      transform: translateX(-50%); /* 가운데 정렬 */
+      background-color: #fff; /* 배경색 설정 */
+      border: 1px solid #ccc; /* 테두리 설정 */
+      border-radius: 5px; /* 모서리 둥글게 설정 */
+      padding: 5px 10px; /* 내부 여백 설정 */
+      display: none; /* 초기에는 표시하지 않음 */
+      z-index: 1; /* 다른 요소 위에 표시되도록 설정 */
+      font-size: 12px; /* 글씨 크기를 12px로 설정 */
+      color: red; /* 글씨색을 빨간색으로 설정 */
+      font-family: Arial, sans-serif; /* 글씨체 설정 */
+    }
+    .quantity-message::after {
+      content: ''; /* 가상 요소 생성 */
+      position: absolute; /* 절대 위치로 설정 */
+      top: 100%; /* 메시지 아래에 위치하도록 설정 */
+      left: 50%; /* 가운데 정렬을 위해 수평 위치 조정 */
+      border: solid transparent; /* 투명한 테두리 설정 */
+      border-top-color: #ccc; /* 상단 테두리 색상 설정 */
+      border-width: 8px; /* 테두리 두께 설정 */
+      margin-left: -8px; /* 가운데 정렬을 위해 위치 조정 */
+    }
   </style>
 </head>
 <body>
@@ -85,13 +113,14 @@
         <button id="decrease">-</button>
         <input type="number" id="quantity" value="1" min="1" max="999"> <!-- 최소값과 최대값 설정 -->
         <button id="increase">+</button>
+        <div id="quantityMessage" class="quantity-message"></div>
       </div>
     </div>
     <div class="small-details" id="buyNow">
       바로구매
     </div>
     <div class="small-details" id="addToCart">
-        장바구니
+      장바구니
     </div>
   </div>
 </div>
@@ -110,20 +139,33 @@
   // "-" 버튼 클릭 시 수량 감소
   decreaseBtn.addEventListener("click", function() {
     let quantity = parseInt(quantityInput.value);
+    let maxQuantity = parseInt([[${item.quantity}]]);
     if (quantity > 1) {
       quantity--;
       quantityInput.value = quantity;
       updatePrice(quantity);
+    }
+    // + 버튼 활성화/비활성화
+    if(quantity < 999 && quantity < maxQuantity && increaseBtn.disabled){
+      increaseBtn.disabled = false
     }
   });
 
   // "+" 버튼 클릭 시 수량 증가
   increaseBtn.addEventListener("click", function() {
     let quantity = parseInt(quantityInput.value);
-    if (quantity < 999) { // 최대값 체크
+    let maxQuantity = parseInt([[${item.quantity}]]);
+    if (quantity < 999 && quantity < maxQuantity) { // 최대값 체크
       quantity++;
       quantityInput.value = quantity;
       updatePrice(quantity);
+    }
+
+    // + 버튼 활성화/비활성화
+    if (quantity >= 999 || quantity >= maxQuantity) {
+      increaseBtn.disabled = true; // 비활성화
+    } else {
+      increaseBtn.disabled = false; // 활성화
     }
   });
 
@@ -136,13 +178,29 @@
   // 수량 입력 필드 변경 이벤트
   quantityInput.addEventListener("change", function() {
     let quantity = parseInt(quantityInput.value);
+    let maxQuantity = parseInt([[${item.quantity}]]);
     if (quantity < 1) {
       quantityInput.value = 1; // 음수 입력 시 1로 초기화
-    } else if (quantity > 999) {
-      quantityInput.value = 999; // 999를 초과한 값은 999로 설정
+    } else if (quantity > 999 || quantity > maxQuantity) {
+      quantityInput.value = Math.min(999, maxQuantity); // 999를 초과한 값은 999로 설정
+
+      //말풍선 표시
+      const message = "선택 가능한 수량은 " + Math.min(999, maxQuantity) + "개 입니다.";
+      showQuantityMessage(message);
     }
     updatePrice(quantity);
   });
+
+  // 말풍선 표시 함수
+  function showQuantityMessage(message) {
+    const messageElement = document.getElementById("quantityMessage");
+    messageElement.textContent = message;
+    messageElement.style.display = "block"; // 말풍선 표시
+    // 3초 후에 말풍선 숨기기
+    setTimeout(function() {
+      messageElement.style.display = "none";
+    }, 3000);
+  }
 
   // 장바구니 클릭 시 알림창 표시
   addToCartBtn.addEventListener("click", function() {

@@ -12,7 +12,9 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +30,7 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping("/")
 @RequiredArgsConstructor
+@Slf4j
 public class CartController {
 
     private final CartItemService cartItemService;
@@ -46,19 +49,21 @@ public class CartController {
         String cookieString = cookieController.merge(request.getCookies());
         List<CartItem> cartItems = cookieController.buildCartItemList(cookieString,member);
 
+        //cookieString을 cartItems와 동기화해야함.
+        cookieString = cookieController.sync_CartItem_Cookie(cartItems,cookieString);
+
         if(!userId.equals(anonymousUser)){
-            cookieController.saveCookieCartItems(cartItems);
-            List<CartItem> member_CartItems = cartItemService.cartList(member.getId());
-            Cookie cookie = new Cookie("Cart","");
-            cookie.setMaxAge(0); // 기본 하루 유지
-            cookie.setPath("/");
+            cookieController.saveCookieCartItems(member.getId(),cartItems);
+            Cookie cookie = cookieController.setCookie("Cart","",0,"/");
             response.addCookie(cookie);
+            List<CartItem> member_CartItems = cartItemService.cartList(member.getId());
+
             model.addAttribute("cartItems",member_CartItems);
         }else{
-            Cookie cookie = new Cookie("Cart",cookieString);
-            cookie.setMaxAge(1*24*60*60);
-            cookie.setPath("/");
-            response.addCookie(cookie);
+            if(!cookieString.isBlank()) {
+                Cookie cookie = cookieController.setCookie("Cart", cookieString, 1 * 24 * 60 * 60, "/");
+                response.addCookie(cookie);
+            }
             model.addAttribute("cartItems",cartItems);
         }
 

@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 public class CookieController {
     @Autowired
     private ItemService itemService;
-
     @Autowired
     private CartItemRepository cartItemRepository;
 
@@ -32,16 +31,21 @@ public class CookieController {
     // 없다면 새로 cartItem 저장.
     // 해당 함수는 "로그인한 사용자"의 쿠키를 반영할 때만 호출된다.
     @Transactional
-    public void saveCookieCartItems(List<CartItem> cartItems){
+    public void saveCookieCartItems(Long id,List<CartItem> cartItems){
         for(CartItem cartItem : cartItems){
-            List<CartItem> result = cartItemRepository.findByMemberId_AND_itemId(cartItem.getMember().getId(),cartItem.getItem().getId());
+            List<CartItem> result = cartItemRepository.findByMemberId_AND_itemId(id,cartItem.getItem().getId());
             if(result.isEmpty()){
+                // 밖에 buildCartItemList함수에서 maxQuantity를 못 넘도록 이미 제한 했으므로 또 확인 할 필요 x
                 cartItemRepository.saveCartItem(cartItem);
             }
             else{
                 CartItem findCartItem = result.get(0);
                 Long default_Quantity = findCartItem.getQuantity();
                 Long UpdateQuantity = default_Quantity + cartItem.getQuantity();
+
+                // DB에 조회한 이미 있는 수량과 새로운 수량을 더 해봐야 maxQuantity를 넘는지 알 수 있으므로 여기서 maxQuantity 못넘게 제한.
+                Long maxQuantity = findCartItem.getItem().getQuantity();
+                UpdateQuantity = Math.min(maxQuantity,UpdateQuantity);
                 cartItemRepository.updateQuantity(findCartItem.getId(),UpdateQuantity);
             }
         }
@@ -91,10 +95,21 @@ public class CookieController {
             Long productId = Long.valueOf(productAndQuantity[0]);
             Long quantity = Long.valueOf(productAndQuantity[1]);
             Item item = itemService.findById(productId);
+            Long maxQuantity = item.getQuantity();
+            quantity = Math.min(quantity,maxQuantity);
             CartItem cartItem = CartItem.builder().member(member).item(item).quantity(quantity).build();
             cartItems.add(cartItem);
         }
         return cartItems;
+    }
+
+    public String sync_CartItem_Cookie(List<CartItem> cartItems,String cookieString){
+        StringBuilder cookieBuilder = new StringBuilder();
+        for(CartItem ci : cartItems){
+            String cartItemString = "|"+ci.getItem().getId().toString()+":"+ci.getQuantity().toString();
+            cookieBuilder.append(cartItemString);
+        }
+        return cookieBuilder.toString();
     }
 
     public String updateCookie(String cookieString, Long itemId,Long newQuantity){
